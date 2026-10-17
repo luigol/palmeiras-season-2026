@@ -1,0 +1,3 @@
+# Ficam só no computador: o site busca os dados direto da ESPN
+*.csv
+*.py

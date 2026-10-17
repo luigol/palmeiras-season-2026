@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Palmeiras em números</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  // aplica o tema escolhido antes da primeira pintura, para não piscar
+  try { const t = localStorage.getItem('palmeiras:tema'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<style>
+  :root {
+    color-scheme: light;
+    --fonte: Geist, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --bg: #fafafa;
+    --surface: #ffffff;
+    --hover: rgba(0, 0, 0, 0.045);
+    --ink: #0a0a0a;
+    --ink2: #525252;
+    --muted: #8a8a8a;
+    --grid: #efefef;
+    --border: rgba(0, 0, 0, 0.08);
+    --sombra: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --pal: #0a7d45;
+    --adv: #8a8a8a;
+    --linha: #0a0a0a;
+    --live: #e5484d;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --hover: rgba(255, 255, 255, 0.06);
+      --ink: #f5f5f5;
+      --ink2: #a3a3a3;
+      --muted: #737373;
+      --grid: #232323;
+      --border: rgba(255, 255, 255, 0.08);
+      --sombra: none;
+      --pal: #22a35c;
+      --adv: #6b6b6b;
+      --linha: #f5f5f5;
+      --live: #ff6369;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --hover: rgba(255, 255, 255, 0.06);
+    --ink: #f5f5f5;
+    --ink2: #a3a3a3;
+    --muted: #737373;
+    --grid: #232323;
+    --border: rgba(255, 255, 255, 0.08);
+    --sombra: none;
+    --pal: #22a35c;
+    --adv: #6b6b6b;
+    --linha: #f5f5f5;
+    --live: #ff6369;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 14px/1.5 var(--fonte);
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font: inherit; color: inherit; }
+  button:focus-visible { outline: 2px solid var(--pal); outline-offset: 2px; }
+
+  .app { max-width: 1240px; margin: 0 auto; padding: 0 32px 48px; }
+
+  /* ---------- Topo ---------- */
+  .topo { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; }
+  .marca { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 15px; letter-spacing: -0.01em; white-space: nowrap; }
+  .marca .ponto { width: 10px; height: 10px; border-radius: 50%; background: var(--pal); }
+  .marca .ano { color: var(--muted); font-weight: 400; }
+  .status { display: flex; align-items: center; gap: 14px; min-width: 0; color: var(--ink2); font-size: 13px; }
+  #ao-vivo { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #ao-vivo.pilula span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  #ao-vivo.pilula {
+    display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px;
+    border: 1px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--ink);
+  }
+  .pulso { width: 7px; height: 7px; border-radius: 50%; background: var(--live); flex: none; animation: pulso 1.6s ease-in-out infinite; }
+  @keyframes pulso { 50% { opacity: 0.35; } }
+  #atualizado { color: var(--muted); white-space: nowrap; }
+  .icone {
+    display: inline-flex; align-items: center; justify-content: center; flex: none;
+    width: 32px; height: 32px; border: 0; border-radius: 8px; background: none; color: var(--ink2); cursor: pointer;
+  }
+  .icone:hover { background: var(--hover); color: var(--ink); }
+
+  /* ---------- Grade ---------- */
+  .grade { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 40px; padding-top: 24px; }
+
+  /* ---------- Lateral ---------- */
+  .lateral { position: sticky; top: 24px; align-self: start; }
+  .secao + .secao { margin-top: 28px; }
+  .secao h2 {
+    margin: 0 0 6px; padding: 0 10px;
+    font-size: 11px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted);
+  }
+  .grupo { margin: 12px 0 2px; padding: 0 10px; font-size: 12px; color: var(--muted); }
+  .opcao {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%;
+    padding: 7px 10px; border: 0; border-radius: 8px; background: none; color: var(--ink2);
+    text-align: left; cursor: pointer; transition: background-color 0.15s, color 0.15s;
+  }
+  .opcao:hover { background: var(--hover); color: var(--ink); }
+  .opcao[aria-pressed="true"] {
+    background: var(--surface); color: var(--ink); font-weight: 500;
+    box-shadow: 0 0 0 1px var(--border), var(--sombra);
+  }
+  .opcao .qtd { font-size: 12px; font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  /* ---------- Conteúdo ---------- */
+  .cabecalho { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+  .cabecalho h1 { margin: 0; font-size: 28px; font-weight: 600; line-height: 1.15; letter-spacing: -0.025em; }
+  .cabecalho p { margin: 6px 0 0; color: var(--ink2); }
+  .descricao { max-width: 76ch; margin: -6px 0 20px; font-size: 13px; color: var(--muted); }
+  .descricao[hidden] { display: none; }
+  .controles { display: flex; flex-wrap: wrap; gap: 8px; }
+  .segmentado { display: inline-flex; padding: 3px; border-radius: 10px; background: var(--hover); }
+  .segmentado button {
+    padding: 5px 14px; border: 0; border-radius: 7px; background: none; color: var(--ink2);
+    font-size: 13px; cursor: pointer; transition: background-color 0.15s, color 0.15s;
+  }
+  .segmentado button[aria-pressed="true"] {
+    background: var(--surface); color: var(--ink); font-weight: 500;
+    box-shadow: 0 0 0 1px var(--border), var(--sombra);
+  }
+
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 12px; }
+  .kpi { min-width: 0; padding: 14px 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+  .kpi .rot { font-size: 13px; color: var(--ink2); }
+  .kpi .val { margin-top: 2px; font-size: 26px; font-weight: 600; line-height: 1.25; letter-spacing: -0.02em; }
+  .kpi .val small { margin-left: 1px; font-size: 16px; font-weight: 500; color: var(--ink2); }
+  .kpi .det { min-height: 18px; margin-top: 2px; overflow: hidden; font-size: 12px; color: var(--muted); text-overflow: ellipsis; white-space: nowrap; }
+
+  .cartao { padding: 16px 20px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+  .cartao-topo { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .legenda { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12px; color: var(--ink2); }
+  .legenda span { display: inline-flex; align-items: center; gap: 7px; }
+  .chave-barra { width: 10px; height: 10px; border-radius: 3px; }
+  .chave-linha { width: 14px; height: 2px; border-radius: 1px; background: var(--linha); }
+  .chave-ponto { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
+  .botao-texto {
+    padding: 4px 10px; border: 1px solid var(--border); border-radius: 8px; background: none;
+    font-size: 12px; color: var(--ink2); cursor: pointer;
+  }
+  .botao-texto:hover { background: var(--hover); color: var(--ink); }
+  .area { position: relative; height: 380px; }
+  .vazio {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 12px; padding: 16px; color: var(--muted); font-size: 13px; text-align: center;
+  }
+  .vazio[hidden] { display: none; }
+
+  .tabela { margin-top: 12px; max-height: 420px; overflow: auto; padding: 0; }
+  .tabela[hidden] { display: none; }
+  .tabela table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tabela th, .tabela td { padding: 8px 16px; border-bottom: 1px solid var(--border); text-align: left; white-space: nowrap; }
+  .tabela th { position: sticky; top: 0; background: var(--surface); font-weight: 500; color: var(--ink2); }
+  .tabela td { color: var(--ink2); }
+  .tabela td:last-child, .tabela th:last-child { text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .tabela tr:last-child td { border-bottom: 0; }
+
+  .rodape { margin: 20px 0 0; font-size: 12px; color: var(--muted); }
+
+  @media (max-width: 860px) {
+    .app { padding: 0 16px 32px; }
+    #atualizado { display: none; }
+    .grade { grid-template-columns: minmax(0, 1fr); gap: 20px; padding-top: 8px; }
+    .lateral { position: static; }
+    .secao + .secao { margin-top: 16px; }
+    .secao h2 { padding: 0; }
+    .lista { display: flex; flex-wrap: wrap; gap: 6px; }
+    .grupo { display: none; }
+    .opcao { width: auto; padding: 5px 12px; border-radius: 999px; box-shadow: 0 0 0 1px var(--border); }
+    .cabecalho h1 { font-size: 22px; }
+    .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .kpi .val { font-size: 22px; }
+    .cartao { padding: 14px 14px 8px; }
+    .area { height: 300px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topo">
+    <div class="marca"><span class="ponto"></span>Palmeiras <span class="ano" id="ano"></span></div>
+    <div class="status">
+      <span id="ao-vivo"></span>
+      <span id="atualizado"></span>
+      <button class="icone" id="tema" type="button" aria-label="Alternar tema claro/escuro"></button>
+    </div>
+  </header>
+
+  <main class="grade">
+    <nav class="lateral" aria-label="Filtros">
+      <section class="secao">
+        <h2>Campeonatos</h2>
+        <div class="lista" id="campeonatos"></div>
+      </section>
+      <section class="secao">
+        <h2>Estatísticas</h2>
+        <div class="lista" id="estatisticas"></div>
+      </section>
+      <section class="secao">
+        <h2>Minhas métricas</h2>
+        <div class="lista" id="minhas"></div>
+      </section>
+    </nav>
+
+    <div>
+      <div class="cabecalho">
+        <div>
+          <h1 id="titulo"></h1>
+          <p id="subtitulo"></p>
+        </div>
+        <div class="controles">
+          <div class="segmentado" role="group" aria-label="De quem são os números" data-campo="lado">
+            <button type="button" data-valor="pal">Palmeiras</button>
+            <button type="button" data-valor="adv">Adversários</button>
+          </div>
+          <div class="segmentado" role="group" aria-label="Mando de campo" data-campo="mando">
+            <button type="button" data-valor="todos">Todos</button>
+            <button type="button" data-valor="casa">Casa</button>
+            <button type="button" data-valor="fora">Fora</button>
+          </div>
+        </div>
+      </div>
+      <p class="descricao" id="descricao" hidden></p>
+
+      <div class="kpis" id="kpis"></div>
+
+      <section class="cartao">
+        <div class="cartao-topo">
+          <div class="legenda" id="legenda"></div>
+          <button class="botao-texto" id="ver-tabela" type="button" aria-pressed="false"></button>
+        </div>
+        <div class="area">
+          <canvas id="grafico" role="img"></canvas>
+          <div class="vazio" id="vazio" hidden></div>
+        </div>
+      </section>
+
+      <section class="cartao tabela" id="tabela" hidden></section>
+
+      <p class="rodape">Dados da API pública (não documentada) da ESPN. Jogos encerrados ficam guardados neste navegador; durante uma partida, o placar e as estatísticas são atualizados a cada 30 segundos.</p>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="js/espn.js"></script>
+<script src="js/estatisticas.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
